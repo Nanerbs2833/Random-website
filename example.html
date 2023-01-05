@@ -54,7 +54,7 @@ commentForm.addEventListener('submit', (event) => {
 });
 
 // Fetch the initial set of comments from the server and display them
-fetch('/comments')
+fetch('/Random-website/comments')
   .then((response) => response.json())
   .then((comments) => {
     for (const { name, comment } of comments) {
