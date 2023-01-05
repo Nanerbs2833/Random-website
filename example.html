@@ -1,0 +1,67 @@
+<!-- This is the HTML part -->
+
+<h1>Comment System</h1>
+
+<!-- This is the form for submitting new comments -->
+<form id="comment-form">
+  <label for="name">Name:</label><br>
+  <input type="text" id="name" required><br>
+  <label for="comment">Comment:</label><br>
+  <textarea id="comment" required></textarea><br>
+  <button type="submit">Submit Comment</button>
+</form>
+
+<!-- This is the container for displaying the comments -->
+<div id="comments"></div>
+
+<script>
+// This is the JavaScript part
+
+// Get references to the form and comments container
+const commentForm = document.getElementById('comment-form');
+const commentsContainer = document.getElementById('comments');
+
+// Add a submit event listener to the form
+commentForm.addEventListener('submit', (event) => {
+  // Prevent the default form submission behavior
+  event.preventDefault();
+
+  // Get the values of the form inputs
+  const name = document.getElementById('name').value;
+  const comment = document.getElementById('comment').value;
+
+  // Send the comment to the server to be stored in the database
+  fetch('/comments', {
+    method: 'POST',
+    body: JSON.stringify({ name, comment }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then((response) => {
+    // If the comment was successfully stored, add it to the comments container
+    if (response.ok) {
+      const newComment = document.createElement('div');
+      newComment.innerHTML = `
+        <p>${name}: ${comment}</p>
+      `;
+      commentsContainer.appendChild(newComment);
+    }
+  });
+
+  // Reset the form
+  commentForm.reset();
+});
+
+// Fetch the initial set of comments from the server and display them
+fetch('/comments')
+  .then((response) => response.json())
+  .then((comments) => {
+    for (const { name, comment } of comments) {
+      const newComment = document.createElement('div');
+      newComment.innerHTML = `
+        <p>${name}: ${comment}</p>
+      `;
+      commentsContainer.appendChild(newComment);
+    }
+  });
+</script>
